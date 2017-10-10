@@ -291,6 +291,12 @@ namespace OpenRA.Mods.Common.AI
 			{
 				var name = frac.Key;
 
+				//Do we have source of income?
+				if (!ai.HasProc())
+				{
+					return null;
+				}
+
 				// Can we build this structure?
 				if (!buildableThings.Any(b => b.Name == name))
 					continue;

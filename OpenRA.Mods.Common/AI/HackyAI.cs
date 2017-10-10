@@ -476,6 +476,13 @@ namespace OpenRA.Mods.Common.AI
 				CountBuildingByCommonName(Info.BuildingCommonNames.VehiclesFactory, Player) == 0;
 		}
 
+		public bool HasProc()
+		{
+			// Require at least one refinery, unless we lack Construction yard.
+			return CountBuildingByCommonName(Info.BuildingCommonNames.Refinery, Player) > 0 ||
+				CountBuildingByCommonName(Info.BuildingCommonNames.ConstructionYard, Player) == 0;
+		}
+
 		public bool HasAdequateProc()
 		{
 			// Require at least one refinery, unless we can't build it.
