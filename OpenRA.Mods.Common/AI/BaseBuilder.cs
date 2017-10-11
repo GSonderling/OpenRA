@@ -217,7 +217,7 @@ namespace OpenRA.Mods.Common.AI
 			}
 
 			// Next is to build up a strong economy
-			if (!ai.HasAdequateProc() || !ai.HasMinimumProc())
+			if (!ai.HasAdequateProc() || !ai.HasMinimumProc() || !ai.HasProc())
 			{
 				var refinery = GetProducibleBuilding(ai.Info.BuildingCommonNames.Refinery, buildableThings);
 				if (refinery != null && HasSufficientPowerForActor(refinery))
@@ -273,6 +273,12 @@ namespace OpenRA.Mods.Common.AI
 			if (playerResources.Resources > 0.8 * playerResources.ResourceCapacity)
 			{
 				var silo = GetProducibleBuilding(ai.Info.BuildingCommonNames.Silo, buildableThings);
+
+				if (!ai.HasProc())
+				{
+					return GetProducibleBuilding(ai.Info.BuildingCommonNames.Refinery, buildableThings);
+				}
+
 				if (silo != null && HasSufficientPowerForActor(silo))
 				{
 					HackyAI.BotDebug("AI: {0} decided to build {1}: Priority override (silo)", queue.Actor.Owner, silo.Name);
@@ -290,11 +296,11 @@ namespace OpenRA.Mods.Common.AI
 			foreach (var frac in ai.Info.BuildingFractions.Shuffle(ai.Random))
 			{
 				var name = frac.Key;
-
+				
 				//Do we have source of income?
 				if (!ai.HasProc())
 				{
-					return null;
+					return GetProducibleBuilding(ai.Info.BuildingCommonNames.Refinery, buildableThings);
 				}
 
 				// Can we build this structure?
