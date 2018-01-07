@@ -1185,6 +1185,10 @@ namespace OpenRA.Mods.Common.AI
 			if (!HasAdequateProc())
 				return;
 
+			//Damaged construction yards
+			CheckBuildingDamage(self.World.Actors.FirstOrDefault(a => a.Owner == Player &&
+				Info.BuildingCommonNames.ConstructionYard.Contains(a.Info.Name)));
+
 			// No construction yards - Build a new MCV
 			if (Info.UnitsCommonNames.Mcv.Any() && !HasAdequateFact() && !self.World.Actors.Any(a => a.Owner == Player &&
 				Info.UnitsCommonNames.Mcv.Contains(a.Info.Name)))
@@ -1263,6 +1267,17 @@ namespace OpenRA.Mods.Common.AI
 			{
 				defenseCenter = e.Attacker.Location;
 				ProtectOwn(e.Attacker);
+			}
+		}
+
+		void CheckBuildingDamage(Actor self)
+		{
+			if (self == null || self.TraitOrDefault<RepairableBuilding>().RepairActive) return;
+			if(self.GetDamageState() > DamageState.Light)
+			{
+				BotDebug("Bot noticed damage {0} {1}, repairing.",
+						self, self.GetDamageState());
+				QueueOrder(new Order("RepairBuilding", self.Owner.PlayerActor, Target.FromActor(self), false));
 			}
 		}
 	}
